@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - G2E Translator</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: #333;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .quiz-container {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .quiz-container h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #4a4a4a;
+        }
+
+        .quiz-container .question {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .quiz-container input {
+            padding: 12px;
+            font-size: 16px;
+            width: 80%;
+            margin-bottom: 20px;
+            border-radius: 25px;
+            border: 1px solid #ccc;
+            transition: border-color 0.3s ease;
+        }
+
+        .quiz-container input:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        .quiz-container button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-size: 1em;
+        }
+
+        .quiz-container button:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+        }
+
+        .quiz-container button:active {
+            background-color: #004099;
+            transform: translateY(2px);
+        }
+
+        /* Results Section */
+        .results {
+            display: none;
+            margin-top: 20px;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .results h3 {
+            font-size: 24px;
+            color: #4a4a4a;
+            margin-bottom: 20px;
+        }
+
+        .results p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .results .wrong-answer {
+            color: red;
+            font-weight: bold;
+        }
+
+        .results .correct-answer {
+            color: green;
+            font-weight: bold;
+        }
+
+        /* Card for displaying incorrect answers */
+        .answer-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .answer-card .gujarati-word {
+            font-weight: bold;
+            color: #f093fb;
+        }
+
+        .answer-card .correct-answer {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background-color: #f1f1f1;
+            border-radius: 12px;
+            width: 100%;
+            height: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #28a745;
+            width: 0;
+            transition: width 0.5s ease;
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 30px;
+            }
+
+            .quiz-container h2 {
+                font-size: 24px;
+            }
+
+            .quiz-container input {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h2>Quiz</h2>
+
+        <div th:if="${finalScore != null}">
+            <!-- Progress Bar for Score -->
+            <div class="progress-container">
+                <div class="progress-bar" th:style="'width: ' + (${finalScore} / ${totalQuestions} * 100) + '%'"></div>
+            </div>
+            <h3>Final Score: <span th:text="${finalScore}"></span>/<span th:text="${totalQuestions}"></span></h3>
+
+            <div th:if="${wrongAnswers != null}">
+                <h4>Incorrect Answers:</h4>
+                <div th:each="wrongAnswer : ${wrongAnswers}">
+                    <div class="answer-card">
+                        <div class="gujarati-word">Gujarati: <span th:text="${wrongAnswer.gujarati}"></span></div>
+                        <div class="correct-answer">Correct Answer: <span th:text="${wrongAnswer.english}"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${wrongAnswers.empty}">
+                <p class="correct-answer">All answers were correct! Great job!</p>
+            </div>
+        </div>
+
+        <div th:if="${finalScore == null}">
+            <div class="question" th:text="'What is the English word for ' + ${word.gujarati} + '?'"></div>
+            <form th:action="@{/quiz}" method="post">
+                <input type="hidden" name="gujarati" th:value="${word.gujarati}">
+                <input type="text" id="answer" name="answer" placeholder="Type your answer here">
+                <button type="submit">Next Question</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

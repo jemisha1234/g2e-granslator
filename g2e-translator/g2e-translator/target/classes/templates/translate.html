@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translate</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="translate-page">
+    <div class="navbar">
+        <div class="brand">G2E Translator</div>
+    </div>
+    <div class="container">
+        <h1>Translate</h1>
+        <form th:action="@{/translate}" method="POST">
+            <label for="gujarati">Gujarati:</label>
+            <input type="text" id="gujarati" name="gujarati" required><br><br>
+
+            <button type="submit">Translate</button>
+        </form>
+        
+        <div th:if="${translation}">
+            <h2>Translation Result:</h2>
+            <p>Gujarati: <strong th:text="${gujaratiWord}"></strong></p>
+            <p>English: <strong th:text="${translation}"></strong></p>
+        </div>
+
+        <button th:onclick="'location.href=\'/main-menu\''">Back to Menu</button>
+    </div>
+</body>
+</html>
